@@ -20,10 +20,10 @@ interface Args {
 
 function parseArgs(argv: string[]): Args {
   if (argv.includes('--help') || argv.includes('-h')) {
-    console.log(`agentic-dataset-builder@0.2.0
+    console.log(`agentic-dataset-builder@0.2.1
 
 Usage:
-  npx agentic-dataset-builder@0.2.0 --output-root ./out
+  npx agentic-dataset-builder@0.2.1 --output-root ./out
 
 Options:
   --output-root <dir>       Output directory root

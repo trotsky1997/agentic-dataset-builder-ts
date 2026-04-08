@@ -1,6 +1,6 @@
 {
   "name": "agentic-dataset-builder",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Pure TypeScript agentic dataset builder for Pi, Codex, and Claude Code history",
   "license": "MIT",
   "type": "module",
@@ -26,7 +26,24 @@
     "agentic-dataset-builder": "./dist/cli.js"
   },
   "files": [
-    "dist",
+    "dist/cli.js",
+    "dist/cli.d.ts",
+    "dist/labeling.js",
+    "dist/labeling.d.ts",
+    "dist/parquet.js",
+    "dist/parquet.d.ts",
+    "dist/platform",
+    "dist/schemas/qwen35.js",
+    "dist/schemas/qwen35.d.ts",
+    "dist/schemas/source.js",
+    "dist/schemas/source.d.ts",
+    "dist/sources/pi.js",
+    "dist/sources/pi.d.ts",
+    "dist/sources/codex.js",
+    "dist/sources/codex.d.ts",
+    "dist/sources/claude.js",
+    "dist/sources/claude.d.ts",
+    "dist/utils",
     "README.md",
     "LICENSE"
   ],

@@ -18,7 +18,7 @@ The CLI is native Node.js + TypeScript. It does not require Python.
 If the package is published on npm:
 
 ```bash
-npx --registry=https://registry.npmjs.org/ agentic-dataset-builder@0.2.0 --output-root ./out
+npx --registry=https://registry.npmjs.org/ agentic-dataset-builder@0.2.1 --output-root ./out
 ```
 
 If working from this repo locally:

@@ -1,0 +1,7 @@
+src/
+node_modules/
+out/
+out-pi/
+*.tgz
+**/*.test.js
+**/*.test.d.ts
