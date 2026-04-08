@@ -146,7 +146,8 @@ function normalizeAssistant(msg: Record<string, unknown>, tools: Map<string, { n
       if (type === 'text') {
         textBlocks.push({ type: 'text', text: asString(block.text) ?? '' });
       } else if (type === 'thinking') {
-        const thinking = asString(block.thinking);
+        const rawThinking = asString(block.thinking);
+        const thinking = sanitizePiThinking(rawThinking);
         if (thinking) reasoning.push(thinking);
         if (!thinking && asString(block.thinkingSignature)) lossyReasons.add('encrypted_reasoning_without_visible_text');
       } else if (type === 'toolCall') {
@@ -170,6 +171,13 @@ function normalizeAssistant(msg: Record<string, unknown>, tools: Map<string, { n
   if (reasoning.length) assistant.reasoning_content = reasoning.join('\n\n');
   if (toolCalls.length) assistant.tool_calls = toolCalls;
   return assistant;
+}
+
+function sanitizePiThinking(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  // Strip only a true outer wrapper while preserving literal inner `<think>` text.
+  const cleaned = value.replace(/^\s*<think>\s*/i, '').replace(/\s*<\/think>\s*$/i, '').trim();
+  return cleaned || undefined;
 }
 
 function formatBash(msg: Record<string, unknown>, lossyReasons: Set<string>): string {
