@@ -1,6 +1,6 @@
 {
   "name": "agentic-dataset-builder",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Pure TypeScript agentic dataset builder for Pi, Codex, and Claude Code history",
   "license": "MIT",
   "type": "module",

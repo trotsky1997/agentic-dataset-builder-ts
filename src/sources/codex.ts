@@ -61,7 +61,15 @@ class TurnBuilder {
     }
     this.flushAssistant();
     if (role === 'user') this.messages.push({ role: 'user', content: text });
-    else if (role === 'developer' && text) this.messages.push({ role: 'system', content: text });
+    else if (role === 'developer' && text) {
+      const seenNonSystem = this.messages.some((message) => message.role !== 'system');
+      if (seenNonSystem) {
+        this.lossyReasons.add('late_developer_message_demoted');
+        this.messages.push({ role: 'assistant', content: `[developer]\n${text}` });
+      } else {
+        this.messages.push({ role: 'system', content: text });
+      }
+    }
   }
 
   ingestReasoning(payload: Record<string, unknown>) {
