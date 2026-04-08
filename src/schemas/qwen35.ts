@@ -138,7 +138,7 @@ export const Qwen35RecordSchema = z.object({
     }
 
     if (message.role === 'assistant' && typeof message.reasoning_content === 'string') {
-      if (message.reasoning_content.includes('<think>') || message.reasoning_content.includes('</think>')) {
+      if (/^\s*<think>/i.test(message.reasoning_content) || /<\/think>\s*$/i.test(message.reasoning_content)) {
         ctx.addIssue({ code: 'custom', message: 'reasoning_content must not include <think> wrappers' });
       }
     }

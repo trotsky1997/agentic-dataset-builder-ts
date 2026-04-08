@@ -149,7 +149,7 @@ function normalizeAssistant(msg: Record<string, unknown>, tools: Map<string, { n
         const rawThinking = asString(block.thinking);
         const thinking = sanitizePiThinking(rawThinking);
         if (thinking) reasoning.push(thinking);
-        if (!rawThinking && asString(block.thinkingSignature)) lossyReasons.add('encrypted_reasoning_without_visible_text');
+        if (!thinking && asString(block.thinkingSignature)) lossyReasons.add('encrypted_reasoning_without_visible_text');
       } else if (type === 'toolCall') {
         const name = asString(block.name) ?? 'tool';
         tools.set(name, { name });
@@ -175,8 +175,8 @@ function normalizeAssistant(msg: Record<string, unknown>, tools: Map<string, { n
 
 function sanitizePiThinking(value: string | undefined): string | undefined {
   if (!value) return undefined;
-  // Pi histories can retain literal reasoning wrappers that the export schema disallows.
-  const cleaned = value.replace(/<\/?think>/gi, '').trim();
+  // Strip only a true outer wrapper while preserving literal inner `<think>` text.
+  const cleaned = value.replace(/^\s*<think>\s*/i, '').replace(/\s*<\/think>\s*$/i, '').trim();
   return cleaned || undefined;
 }
 
