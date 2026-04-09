@@ -202,7 +202,8 @@ export async function collectCodexRecords(root: string): Promise<Qwen35Record[]>
     let invalidJsonlLineSkipped = false;
     const entries = (await readJsonl(file, {
       skipInvalid: true,
-      onInvalidLine: () => {
+      onInvalidLine: ({ filePath, lineNumber, error }) => {
+        console.warn(`[codex] skipped invalid JSONL line ${filePath}:${lineNumber}: ${error.message}`);
         invalidJsonlLineSkipped = true;
       },
     })).map((entry) => CodexEntrySchema.parse(entry));

@@ -27,8 +27,8 @@ Usage:
 
 Options:
   --output-root <dir>       Output directory root
-  --include-sources <list>  Comma-separated: pi,codex,claude
-  --include-labels <list>   Comma-separated: cot_eligible,agent_only,prompt_only,discard
+  --include-sources <list>  Comma-separated: pi,codex,claude (default: pi,codex,claude)
+  --include-labels <list>   Comma-separated: cot_eligible,agent_only,prompt_only,discard (default: cot_eligible,agent_only,prompt_only)
   --pi-root <dir>           Override Pi session root
   --codex-root <dir>        Override Codex session root
   --claude-root <dir>       Override Claude project history root
@@ -39,8 +39,8 @@ Options:
 
   const args: Args = {
     outputRoot: './out',
-    includeSources: ['pi', 'codex'],
-    includeLabels: new Set(['cot_eligible', 'agent_only']),
+    includeSources: ['pi', 'codex', 'claude'],
+    includeLabels: new Set(['cot_eligible', 'agent_only', 'prompt_only']),
   };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
