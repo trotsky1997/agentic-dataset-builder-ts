@@ -21,6 +21,11 @@ If the package is published on npm:
 npx --registry=https://registry.npmjs.org/ agentic-dataset-builder@0.2.4 --output-root ./out
 ```
 
+Default behavior now includes:
+
+- sources: `pi,codex,claude`
+- labels kept: `cot_eligible,agent_only,prompt_only`
+
 If working from this repo locally:
 
 ```bash
@@ -49,10 +54,10 @@ The CLI will:
   - full agent traces
   - usually produces `agent_only`
 - `claude`
-  - prompt history only for now
-  - produces `prompt_only`
+  - local project traces with assistant messages, tool calls, tool results, and visible thinking when present
+  - can produce `cot_eligible`, `agent_only`, or `discard`
 
-Claude is intentionally low-fidelity right now. It is not treated as a full assistant/tool trace source.
+Claude prompt-only fallback is no longer the default parser path.
 
 ## Default output
 
@@ -76,16 +81,28 @@ Files:
 
 ## Recommended commands
 
-Pi + Codex:
+Pi + Codex + Claude prompt-only (default):
+
+```bash
+node dist/cli.js --output-root ./out
+```
+
+Pi + Codex only:
 
 ```bash
 node dist/cli.js --output-root ./out --include-sources pi,codex --include-labels cot_eligible,agent_only
 ```
 
-Codex + Claude prompt-only:
+Codex + Claude:
 
 ```bash
-node dist/cli.js --output-root ./out --include-sources codex,claude --include-labels agent_only,prompt_only
+node dist/cli.js --output-root ./out --include-sources codex,claude --include-labels cot_eligible,agent_only
+```
+
+Claude only:
+
+```bash
+node dist/cli.js --output-root ./out --include-sources claude --include-labels cot_eligible,agent_only,discard
 ```
 
 Pi only:
@@ -102,6 +119,7 @@ node dist/cli.js --output-root ./out --include-sources pi --include-labels cot_e
   - any of: `pi,codex,claude`
 - `--include-labels <csv>`
   - any of: `cot_eligible,agent_only,prompt_only,discard`
+  - `prompt_only` remains available for lossy prompt-history style inputs, but local Claude project traces now usually label as `cot_eligible`, `agent_only`, or `discard`
 - `--pi-root <dir>`
   - override detected Pi session path
 - `--codex-root <dir>`
@@ -146,6 +164,10 @@ npm run check
 npm run test
 npm run build
 ```
+
+Claude Code / AI assistant contributors should also read:
+
+- [`docs/claude-code-development.md`](docs/claude-code-development.md)
 
 This repo currently includes:
 

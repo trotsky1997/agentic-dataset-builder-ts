@@ -4,7 +4,7 @@ import path from 'node:path';
 import { candidateClaudeRoots, candidateCodexRoots, candidatePiRoots, firstExisting } from './platform/paths.js';
 import { collectPiRecords } from './sources/pi.js';
 import { collectCodexRecords } from './sources/codex.js';
-import { collectClaudePromptOnlyRecords } from './sources/claude.js';
+import { collectClaudeRecords } from './sources/claude.js';
 import { labelRecord } from './labeling.js';
 import { Qwen35RecordSchema, type Qwen35Record } from './schemas/qwen35.js';
 import { writeParquet } from './parquet.js';
@@ -115,7 +115,7 @@ async function main() {
     if (source === 'claude') {
       const root = path.resolve(args.claudeRoot ?? firstExisting(candidateClaudeRoots()));
       logger.log('claude', `reading ${root}`);
-      const records = await collectClaudePromptOnlyRecords(root);
+      const records = await collectClaudeRecords(root);
       sourceStats.claude = { records: records.length };
       for (const record of records) pushLabeled(record, 'claude', args.includeLabels, allRecords);
       logger.log('claude', `kept ${allRecords.filter((r) => r.source_system === 'claude').length} labeled records`);
