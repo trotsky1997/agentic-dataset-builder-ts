@@ -23,4 +23,26 @@ describe('collectCodexRecords', () => {
     expect(records[0].meta.lossy_reasons).toContain('late_developer_message_demoted');
     expect(records[0].messages[1]?.role).toBe('assistant');
   });
+
+  it('skips malformed jsonl lines and marks the record as lossy', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'codex-history-'));
+    const file = path.join(dir, 'sample.jsonl');
+    const rows = [
+      { type: 'session_meta', payload: { id: 's1', cwd: '/tmp' } },
+      '{bad json',
+      { type: 'event_msg', payload: { type: 'task_started', turn_id: 't1' }, timestamp: '2026-01-01T00:00:00Z' },
+      { type: 'response_item', payload: { type: 'message', role: 'user', content: [{ type: 'input_text', text: 'hi' }] }, timestamp: '2026-01-01T00:00:01Z' },
+      { type: 'response_item', payload: { type: 'message', role: 'assistant', content: [{ type: 'output_text', text: 'ok' }] }, timestamp: '2026-01-01T00:00:03Z' },
+      { type: 'event_msg', payload: { type: 'task_complete' }, timestamp: '2026-01-01T00:00:04Z' },
+    ];
+    fs.writeFileSync(
+      file,
+      rows.map((row) => (typeof row === 'string' ? row : JSON.stringify(row))).join('\n') + '\n',
+      'utf8',
+    );
+
+    const records = await collectCodexRecords(dir);
+    expect(records).toHaveLength(1);
+    expect(records[0].meta.lossy_reasons).toContain('invalid_jsonl_line_skipped');
+  });
 });

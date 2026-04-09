@@ -199,7 +199,13 @@ export async function collectCodexRecords(root: string): Promise<Qwen35Record[]>
   const files = await fg('**/*.jsonl', { cwd: root, absolute: true, onlyFiles: true });
   const records: Qwen35Record[] = [];
   for (const file of files.sort()) {
-    const entries = (await readJsonl(file)).map((entry) => CodexEntrySchema.parse(entry));
+    let invalidJsonlLineSkipped = false;
+    const entries = (await readJsonl(file, {
+      skipInvalid: true,
+      onInvalidLine: () => {
+        invalidJsonlLineSkipped = true;
+      },
+    })).map((entry) => CodexEntrySchema.parse(entry));
     const sessionMeta = ((entries.find((entry) => entry.type === 'session_meta')?.payload ?? {}) as Record<string, unknown>);
     let builder: TurnBuilder | null = null;
     for (const entry of entries) {
@@ -210,6 +216,7 @@ export async function collectCodexRecords(root: string): Promise<Qwen35Record[]>
       }
       if (entry.type === 'event_msg' && payload.type === 'task_started') {
         builder = new TurnBuilder(sessionMeta, asString(payload.turn_id) ?? entry.timestamp ?? 'turn', entry.timestamp ?? '');
+        if (invalidJsonlLineSkipped) builder.lossyReasons.add('invalid_jsonl_line_skipped');
         continue;
       }
       if (!builder) continue;
